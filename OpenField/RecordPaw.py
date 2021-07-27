@@ -15,13 +15,13 @@ RESIZE_FRAC = 0.5
 fps = int(input('fps to play: '))
 wait = int(1000/fps)
 
-pause = left = right = cropped = forward = False
+pause = left = right = cropped = forward = backward = False
 
 def resize(frame, frac):
     return cv.resize(frame, (int(frame.shape[1] * frac), int(frame.shape[0] * frac)))
 
 def on_press(key):
-    global pause, left, right, frame_count, cropped, forward
+    global pause, left, right, frame_count, cropped, forward, backward
 
     try:
         k = key.char #char keys a: left, s: right
@@ -46,6 +46,8 @@ def on_press(key):
                 pause = True
         elif (k == 'right'):
             forward = True
+        elif (k == 'left'):
+            backward = True
 
 
 
@@ -56,12 +58,18 @@ frame_count = 0
 
 while vid.isOpened():
     #play/ pause vid: only show next frame if not paused
-    if (not pause or forward):
-        ret, frame = vid.read()
-        if ret:
-            #update frame_count to keep track of click times
-            frame_count += 1
+    if (not pause or forward or backward):
 
+        if backward:
+            backward = False
+            frame_count -= 1
+            vid.set(cv.CAP_PROP_POS_FRAMES, frame_count)
+            ret, frame = vid.read()
+        else:
+            frame_count += 1
+            ret, frame = vid.read()
+
+        if ret:
             frame = resize(frame, RESIZE_FRAC)
             frame = cv.putText(frame, str(frame_count), (50,50), 
                                cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0))
@@ -74,10 +82,16 @@ while vid.isOpened():
 
             cv.imshow('vid', frame)
 
+            #if forward pressed wait until pressed again/ unpaused to resume
             if (forward):
                 forward = False
                 key = cv.waitKey(0)
                 if (key == 2555904):
+                    break
+
+            if backward:
+                key = cv.waitKey(0)
+                if (key == 2424832):
                     break
 
             if (frame_count == 36000): #36000
