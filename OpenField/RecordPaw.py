@@ -5,7 +5,7 @@ import pandas as pd
 #create empty df with headers: name, count + frame for each direction
 df = pd.DataFrame(columns = ['name',  'frame', 'left_count', 'right_count'])
 
-fpath = 'C:/Users/HS student/Desktop/20210616/FILE210616-133650F_PD5-04.MOV'
+fpath = 'C:/Users/HS student/Desktop/20210729/FILE210729-124200F_PD06-01.MOV'
 vid = cv.VideoCapture(fpath)
 name = (fpath.split('_')[1]).split('.')[0]
 
@@ -15,13 +15,15 @@ RESIZE_FRAC = 0.5
 fps = int(input('fps to play: '))
 wait = int(1000/fps)
 
-pause = left = right = cropped = forward = False
+pause = left = right = cropped = forward = backward = False
+
+cropped_frame = 0
 
 def resize(frame, frac):
     return cv.resize(frame, (int(frame.shape[1] * frac), int(frame.shape[0] * frac)))
 
 def on_press(key):
-    global pause, left, right, frame_count, cropped, forward
+    global pause, left, right, frame_count, cropped, forward, backward, cropped_frame
 
     try:
         k = key.char #char keys a: left, s: right
@@ -31,6 +33,7 @@ def on_press(key):
         elif (k == 's'):
             right = True
         elif (k == 'c' and not cropped):
+            cropped_frame = frame_count
             print('cropped at: ' + str(frame_count))
             frame_count = 0
             cropped = True
@@ -46,6 +49,8 @@ def on_press(key):
                 pause = True
         elif (k == 'right'):
             forward = True
+        elif (k == 'left'):
+            backward = True
 
 
 
@@ -56,12 +61,17 @@ frame_count = 0
 
 while vid.isOpened():
     #play/ pause vid: only show next frame if not paused
-    if (not pause or forward):
-        ret, frame = vid.read()
-        if ret:
-            #update frame_count to keep track of click times
-            frame_count += 1
+    if (not pause or forward or backward):
 
+        if backward:
+            frame_count -= 1
+            vid.set(cv.CAP_PROP_POS_FRAMES, frame_count + cropped_frame)
+            ret, frame = vid.read()
+        else:
+            frame_count += 1
+            ret, frame = vid.read()
+
+        if ret:
             frame = resize(frame, RESIZE_FRAC)
             frame = cv.putText(frame, str(frame_count), (50,50), 
                                cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0))
@@ -72,12 +82,22 @@ while vid.isOpened():
 
             frame = cv.putText(frame, str(min) + " : " + str(sec), (50,100), cv.FONT_HERSHEY_PLAIN, 1, (255,0,0))
 
-            cv.imshow('vid', frame)
+            if backward and frame_count % 2 == 0:
+                cv.imshow(name, frame)
+                backward = False
+            elif frame_count % 6 == 0:
+                cv.imshow(name, frame)
 
+            #if forward pressed wait until pressed again/ unpaused to resume
             if (forward):
                 forward = False
                 key = cv.waitKey(0)
                 if (key == 2555904):
+                    break
+
+            if backward:
+                key = cv.waitKey(0)
+                if (key == 2424832):
                     break
 
             if (frame_count == 36000): #36000
@@ -126,8 +146,7 @@ if (key == ord('q')):
 
 
 print(df)
-df.to_csv(name + '.csv')
-
+df.to_csv('paw_20210729/' + name + '.csv')
 
 
 

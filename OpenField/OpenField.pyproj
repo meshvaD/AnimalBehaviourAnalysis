@@ -25,6 +25,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="CountRotations.py" />
+    <Compile Include="DistanceMeasure.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="movToTiff.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="RecordPaw.py">
       <SubType>Code</SubType>
     </Compile>
