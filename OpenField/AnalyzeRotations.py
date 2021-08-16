@@ -31,7 +31,6 @@ for x in range(0, 10, interval):
     header.append(r)
 
 header.append('adjusted mean')
-data.append(header)
 
 prev_name = ""
 
@@ -83,9 +82,9 @@ row = [0] * int(10/ interval)
 row[insert_index] = c
 
 #dataframe displayed
-df = pd.DataFrame(data = data)
+df = pd.DataFrame(columns = header, data = data)
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
-df.to_csv('output_rotations_20210730.csv', index=False)
+df.to_csv('output_rotations_20210617.csv', index=False)
 
 print(df)

@@ -5,7 +5,7 @@ import pandas as pd
 #create empty df with headers: name, count + frame for each direction
 df = pd.DataFrame(columns = ['name',  'frame', 'left_count', 'right_count'])
 
-fpath = 'C:/Users/HS student/Desktop/20210729/FILE210729-124200F_PD06-01.MOV'
+fpath = 'C:/Users/HS student/Desktop/20210803/FILE210803-084612F_PD5-22.MOV'
 vid = cv.VideoCapture(fpath)
 name = (fpath.split('_')[1]).split('.')[0]
 
@@ -85,7 +85,7 @@ while vid.isOpened():
             if backward and frame_count % 2 == 0:
                 cv.imshow(name, frame)
                 backward = False
-            elif frame_count % 6 == 0:
+            elif frame_count % 4 == 0:
                 cv.imshow(name, frame)
 
             #if forward pressed wait until pressed again/ unpaused to resume
@@ -146,7 +146,7 @@ if (key == ord('q')):
 
 
 print(df)
-df.to_csv('paw_20210729/' + name + '.csv')
+df.to_csv('paw_20210803/' + name + '.csv')
 
 
 

@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>8aadb2ea-f0bb-4992-805d-b8bddee5053c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>RecordPaw.py</StartupFile>
+    <StartupFile>RotationGraph.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,17 +21,20 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CylinderAnalyze.py">
+    <Compile Include="AnalyzePaw.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="CountRotations.py" />
-    <Compile Include="DistanceMeasure.py">
+    <Compile Include="AnalyzeRotations.py" />
+    <Compile Include="MeasureDistance.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="movToTiff.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="RecordPaw.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="RotationGraph.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
