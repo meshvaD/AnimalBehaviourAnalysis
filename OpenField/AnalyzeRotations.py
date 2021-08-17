@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-file = open('C:/Users/HS student/Desktop/20210617/Results.txt')
+file = open('C:/Users/HS student/Desktop/20210621/Results.txt')
 lines = file.readlines()
 
 interval = (int)(input('Time Interval (minutes) '))
@@ -85,6 +85,6 @@ row[insert_index] = c
 df = pd.DataFrame(columns = header, data = data)
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
-df.to_csv('output_rotations_20210617.csv', index=False)
+df.to_csv('output_rotations_20210621.csv', index=False)
 
 print(df)

@@ -2,9 +2,9 @@ import cv2 as cv
 import tifffile as tiff
 import os
 
-basepath = 'C:/Users/HS student/Desktop/20210803/'
+basepath = 'C:/Users/HS student/Desktop/20210621/'
 
-for i in range (11, len(os.listdir(basepath + 'MOVs'))):
+for i in range (0, len(os.listdir(basepath + 'MOVs'))):
     file = os.listdir(basepath + 'MOVs')[i]
     print(file)
     filename = file.split('.')[0]
