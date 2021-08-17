@@ -8,12 +8,12 @@ def get_group(name):
     elif group_2.count(name) > 0:
         return 2
     elif group_3.count(name) > 0:
-        return 3
+        return 2
     elif group_4.count(name) > 0:
-        return 4
+        return 2
 
 
-df = pd.read_csv('output_rotations_20210617.csv')
+df = pd.read_csv('paw_20210616_10signed.csv')
 
 group_1 = ['PD5-01', 'PD5-02', 'PD5-03', 'PD5-13', 'PD5-14']
 group_2 = ['PD5-24', 'PD5-19', 'PD5-20', 'PD5-12']
@@ -43,7 +43,7 @@ fig, ax = plt.subplots(1,1)
 
 ax.axhline(0, linestyle='--', color='gray') #x-axis at y=0
 
-for i in range(0, len(sorted_means)):
+for i in range(0, 2):
     avg = 0
     for mean in sorted_means[i]:
         #plot each point
@@ -52,26 +52,26 @@ for i in range(0, len(sorted_means)):
 
         avg += mean
 
-    avg /= len(sorted_means)
+    avg /= len(sorted_means[i])
 
-    #calculate standard deviation
-    s = 0
-    for val in sorted_means[i]:
-        s += (val - avg) ** 2
-    s= (s/len(sorted_means[i])) ** 0.5
-    print(s)
+    ##calculate standard deviation
+    #s = 0
+    #for val in sorted_means[i]:
+    #    s += (val - avg) ** 2
+    #s= (s/len(sorted_means[i])) ** 0.5
+    #print(s)
 
-    #plot error bars
-    x = [i+1]*len(sorted_means[i])
-    ax.errorbar(x, sorted_means[i], yerr=s, fmt = 'none', color='gray')
+    ##plot error bars
+    #x = [i+1]*len(sorted_means[i])
+    #ax.errorbar(x, sorted_means[i], yerr=s, fmt = 'none', color='gray')
 
     #plot avg line
     ax.hlines(avg, xmin = i+0.8, xmax = i+1.2)
 
-ax.set_xticks([1,2,3,4])
+ax.set_xticks([1,2])
 
 #change depending on slides
-ax.set_xticklabels(['a', 'b', 'c', 'd'])
+ax.set_xticklabels(['a', 'b'])
 
 plt.show()
 
