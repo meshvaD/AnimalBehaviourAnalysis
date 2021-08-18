@@ -39,7 +39,7 @@ row = [0] * int(10/ interval)
 for i in range(1, len(lines)-1): #-1 for header
     l = lines[i]
     
-    name = get_name(l.split('\t')[1])
+    name = get_name(l.split('\t')[1].split('.')[0])
 
     cw_slice = int(l.split('\t')[3])
     insert_index = int(cw_slice / fpm)
