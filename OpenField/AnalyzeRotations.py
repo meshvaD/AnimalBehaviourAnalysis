@@ -1,20 +1,13 @@
 import pandas as pd
 import numpy as np
 
-file = open('C:/Users/HS student/Desktop/20210621/Results.txt')
-lines = file.readlines()
+import tkinter as tk
+from tkinter import filedialog
 
-interval = (int)(input('Time Interval (minutes) '))
-fps = (int)(input('Frames per second '))
-fpm = fps * 60
-
-data = []
-
+#sort numbers and delete two lowest/highest numbers
 def adjusted(nums):
     nums.sort()
-    
-    #s = sorted(nums, key= abs)
-    
+        
     del nums[0]
     del nums[0]
     del nums[len(nums)-1]
@@ -23,8 +16,13 @@ def adjusted(nums):
     return nums
 
 def get_name(filename):
-    return filename.split('_')[1]
+    return filename.split('_')[1].split('.')[0]
 
+interval = (int)(input('Time Interval (minutes) '))
+fps = (int)(input('Frames per second '))
+fpm = fps * 60
+
+#creater header
 header = ['name']
 for x in range(0, 10, interval):
     r = str(x) + ' - ' + str(x+interval)
@@ -32,38 +30,50 @@ for x in range(0, 10, interval):
 
 header.append('adjusted mean')
 
-prev_name = ""
+#user inputed location
+root = tk.Tk()
+root.withdraw()
 
+print('Select the .txt file is location')
+open_file = filedialog.askopenfilename()
+
+df = pd.read_csv(open_file, delimiter = "\t")
+print(df)
+
+data = []
+
+#number of cols depends on interval size
 row = [0] * int(10/ interval)
 
-for i in range(1, len(lines)-1): #-1 for header
-    l = lines[i]
+prev_name = ""
+for index, r in df.iterrows(): 
     
-    name = get_name(l.split('\t')[1].split('.')[0])
+    name = get_name(r['Filename'])
 
-    cw_slice = int(l.split('\t')[3])
+    #ObjectJ updates slice for both cw/ccw for each click --> cw_slice = ccw_slice always
+    cw_slice = int(r['Slice_cw'])
     insert_index = int(cw_slice / fpm)
 
-    if (int(l.split('\t')[2]) != 0):
+    # + for cw (always on left in txt file) and - for ccw
+    if (int(r['Count_cw']) != 0):
         c = 1
-    else: # (l.split('\t')[4] != 0)
+    else:
         c = -1
 
     if(insert_index == len(row)):
         insert_index -= 1
 
+    #if name same as previous txt file row, add data to same animal row
     if (name == prev_name or prev_name == ""):
         row[insert_index] = c + row[insert_index]
     else:
-        print('diff')
-
         adj_mean = np.mean(adjusted(row.copy()))
 
         row.insert(0, prev_name)
         row.insert(len(row), adj_mean)
-        data.append(row)
+        data.append(row) #append animal row to complete data array
 
-        row = [0] * int(10/ interval)
+        row = [0] * int(10/ interval) #reset row
 
         row[insert_index] = c
 
@@ -71,7 +81,6 @@ for i in range(1, len(lines)-1): #-1 for header
     prev_name = name
 
 #for last one
-print('diff')
 adj_mean = np.mean(adjusted(row.copy()))
 
 row.insert(0, prev_name)
@@ -82,9 +91,12 @@ row = [0] * int(10/ interval)
 row[insert_index] = c
 
 #dataframe displayed
-df = pd.DataFrame(columns = header, data = data)
+df_output = pd.DataFrame(columns = header, data = data)
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
-df.to_csv('output_rotations_20210621.csv', index=False)
+print('Select the folder to save new .csv file')
+open_file = filedialog.askdirectory()
 
-print(df)
+df_output.to_csv(open_file + '/Rotation Test_adjusted.csv', index=False)
+
+print(df_output)

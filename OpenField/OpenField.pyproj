@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>8aadb2ea-f0bb-4992-805d-b8bddee5053c</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AnalyzeRotations.py</StartupFile>
+    <StartupFile>Graph_RotPaw.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -35,6 +35,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Graph_RotPaw.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SpliceVideos.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

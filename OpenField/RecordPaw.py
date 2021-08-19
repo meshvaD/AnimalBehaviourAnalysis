@@ -9,6 +9,7 @@ fpath = 'C:/Users/HS student/Desktop/20210803/FILE210803-084612F_PD5-22.MOV'
 vid = cv.VideoCapture(fpath)
 name = (fpath.split('_')[1]).split('.')[0]
 
+#used to reshape frame to be smaller
 RESIZE_FRAC = 0.5
 
 #wait time between frames
@@ -23,23 +24,24 @@ def resize(frame, frac):
     return cv.resize(frame, (int(frame.shape[1] * frac), int(frame.shape[0] * frac)))
 
 def on_press(key):
+    #change var to true when pressed --> action carried out in next frame
     global pause, left, right, frame_count, cropped, forward, backward, cropped_frame
 
     try:
-        k = key.char #char keys a: left, s: right
+        k = key.char #char keys a: left, s: right, c: crop
 
         if (k == 'a'):
             left = True
         elif (k == 's'):
             right = True
-        elif (k == 'c' and not cropped):
+        elif (k == 'c' and not cropped): #if already cropped, cannot crop again
             cropped_frame = frame_count
             print('cropped at: ' + str(frame_count))
             frame_count = 0
             cropped = True
 
     except:
-        k = key.name #space: pause/play, left,right: frame navigation --> for later
+        k = key.name #space: pause/play, left,right: frame navigation 
 
         #pause/ play with space key
         if (k == 'space'):
@@ -53,53 +55,54 @@ def on_press(key):
             backward = True
 
 
-
+#key listener for key presses
 key_List = keyboard.Listener(on_press = on_press)
 key_List.start()
 
 frame_count = 0
 
 while vid.isOpened():
-    #play/ pause vid: only show next frame if not paused
+    #only play a new frame if the video is not paused and the user isn't navigating frames
     if (not pause or forward or backward):
 
+        #takes more time, goes back one frame
         if backward:
             frame_count -= 1
             vid.set(cv.CAP_PROP_POS_FRAMES, frame_count + cropped_frame)
             ret, frame = vid.read()
-        else:
+        else: #if forward/ regular play, go forward one frame
             frame_count += 1
             ret, frame = vid.read()
 
         if ret:
             frame = resize(frame, RESIZE_FRAC)
+
+            #display frame count and time stamp
             frame = cv.putText(frame, str(frame_count), (50,50), 
                                cv.FONT_HERSHEY_SIMPLEX, 1, (0,255,0))
-
-            #time stamp
             min = int(frame_count / 3600)
             sec = int((frame_count / 60) - (60 * min))
-
             frame = cv.putText(frame, str(min) + " : " + str(sec), (50,100), cv.FONT_HERSHEY_PLAIN, 1, (255,0,0))
 
+            #skip over frames to speed up video even more
             if backward and frame_count % 2 == 0:
                 cv.imshow(name, frame)
                 backward = False
             elif frame_count % 4 == 0:
                 cv.imshow(name, frame)
 
-            #if forward pressed wait until pressed again/ unpaused to resume
+            #if navigation pressed, wait until pressed again/ unpaused to resume
             if (forward):
                 forward = False
                 key = cv.waitKey(0)
                 if (key == 2555904):
                     break
-
             if backward:
                 key = cv.waitKey(0)
                 if (key == 2424832):
                     break
 
+            #exit video stream after 10 min at 60fps or after q key pressed
             if (frame_count == 36000): #36000
                 break
             elif (cv.waitKey(wait) & 0xFF == ord('q')):
@@ -110,11 +113,12 @@ while vid.isOpened():
     else:
         cv.waitKey(0)
     
-    #new data row if left or right clicked
+    #new data row if left or right clicked, only documents clicks after video is cropped
     if(cropped):
         if (left or right):
             l_count, r_count = 0., 0.
 
+            #insert value 1 if left/right key pressed
             if (left):
                 l_count = 1.
                 print('left, ' + str(frame_count))
@@ -124,6 +128,7 @@ while vid.isOpened():
                 print('right, ' + str(frame_count))
                 right = False
 
+            #create new df row and insert left/right vals
             try:
                 if (df.iloc[-1][1] == frame_count):
                     if (r_count > 0):
@@ -139,11 +144,11 @@ while vid.isOpened():
                                 'right_count' : r_count}, ignore_index = True)
     
 vid.release()
-               
+        
+#show last frame and export data to csv
 key = cv.waitKey(0)
 if (key == ord('q')):
     cv.destroyAllWindows()
-
 
 print(df)
 df.to_csv('paw_20210803/' + name + '.csv')
