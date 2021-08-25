@@ -15,9 +15,10 @@ count = 0
 geo_mean = 1
 mean = 0
 
-colors = ['ro', 'bo', 'go', 'yo']
+colors = ['go', 'ro', 'bo', 'yo']
 
 sorted_vals = [[None]]
+mean_list = []
 
 for i in range(0, len(x)):
     jitter = np.random.uniform(low=-0.05, high=+0.05)
@@ -29,6 +30,7 @@ for i in range(0, len(x)):
 
         mean /= count
 
+        mean_list.append(mean)
         ax.hlines(mean, xmin = x[i]-0.2-1, xmax = x[i]+0.2-1, color='k')
 
         if i != len(x) - 1:
@@ -36,8 +38,7 @@ for i in range(0, len(x)):
             geo_mean = y[i]
             mean = y[i]
 
-        sorted_vals[-1].append(y[i])
-        sorted_vals.append([None])
+        sorted_vals.append([y[i]])
     else:
         geo_mean *= y[i]
         mean += y[i]
@@ -53,27 +54,27 @@ for i in range(0, len(x)):
 #last group
 geo_mean = geo_mean ** (1/count)
 mean /= count
+
+mean_list.append(mean)
 ax.hlines(mean, xmin = prev_group-0.2, xmax = prev_group+0.2, color='k')
 
 print(sorted_vals)
 
 #calculate standard deviation
-std_list = []
-for group in sorted_vals:
-    
-    s = 0
-    for val in group:
-        s += (val - mean) ** 2
+#std_list = []
+#for group in sorted_vals:
+#    std_list.append(np.std(group))
 
-    s = (s/ len(group)) ** 1/2
+#print(std_list)
 
-    std_list.append(s)
+se_list = [8.6115459961870100,	3.9382458023846100,	2.3741314201197900,	6.8728017102353700]
+#for i in range(0, len(std_list)):
+#    print(std_list[i], ', ', len(sorted_vals[i]) ** (1/2))
+#    se_list.append(std_list[i]/(len(sorted_vals[i]) ** (1/2)))
+#print(se_list)
 
-print(std_list)
-
-se_list = []
-for i in range(0, len(std_list)):
-    se_list.append(std_list[i]/(len(sorted_vals[i]) ** 1/2))
-print(se_list)
+#draw error bars
+for i in range(0, len(se_list)):
+    plt.errorbar(i+1, mean_list[i], yerr=se_list[i], ecolor='k')
 
 plt.show()

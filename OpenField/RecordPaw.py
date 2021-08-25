@@ -85,10 +85,10 @@ while vid.isOpened():
             frame = cv.putText(frame, str(min) + " : " + str(sec), (50,100), cv.FONT_HERSHEY_PLAIN, 1, (255,0,0))
 
             #skip over frames to speed up video even more
-            if backward and frame_count % 2 == 0:
+            if backward and frame_count % 2 == 0: #skips every otehr frame when rewinding
                 cv.imshow(name, frame)
                 backward = False
-            elif frame_count % 4 == 0:
+            elif frame_count % 4 == 0: #plays every 4th frame 
                 cv.imshow(name, frame)
 
             #if navigation pressed, wait until pressed again/ unpaused to resume
